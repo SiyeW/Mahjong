@@ -11,6 +11,7 @@ try:
             if not steadyLocation:
                 start = time.time()
                 # location = locate()
+                # print(f"{location=}")
                 location = (363, 1158, 1685, 224)
                 end = time.time()
                 print(f"Time spent on locating: {end-start:.2f}s")
@@ -22,32 +23,31 @@ try:
                     start = time.time()
                     result = screenshot(*location)
                     end = time.time()
-                    print(f"Time spent on screenshotting: {end-start:.2f}s")
                     if result:
                         start = time.time()
                         (cards, cardsConvert), lastCards = parse(), cards
                         # print(f"{cards=}")
                         end = time.time()
-                        print(f"Time spent on parsing: {end-start:.2f}s")
-                        if cards!=lastCards:
+                        if cards.replace("0","5")!=lastCards.replace("0","5"):
                             start = time.time()
-                            with open('cards',"w") as fo:
-                                fo.write(cardsConvert)
                             result = decide(cards)
                             steadyLocation = location
                             end = time.time()
                             if result == False:
-                                print("*")
                                 time.sleep(0.05)
-                                print("/")
                                 break
-                            print(f"Time spent on deciding: {end-start:.2f}s")
+                            else:
+                                if result != None:
+                                    with open('cards',"w") as fo:
+                                        fo.write(cardsConvert)
+                            # print(f"Time spent on screenshotting: {end-start:.2f}s")
+                            # print(f"Time spent on parsing: {end-start:.2f}s")
+                            # print(f"Time spent on deciding: {end-start:.2f}s")
                         else:
                             if get_handcards(cards)==False:
                                 break
-                    print("-")      
                     time.sleep(0.05)
-                    print("+")
+                    # print("+")
         
     def locate():
         try:
@@ -150,7 +150,7 @@ try:
                     cardText = cardText + str(i)*mjs["z"].get(i,0)
                     if mjs["z"].get(i,0): is_z = True
                 if is_z: cardText = cardText + "z"
-                
+
                 cardTextConvert = ""
                 card_m = card_p = card_s = card_z = ""
                 # 添加 "m" 类型的牌
@@ -174,10 +174,6 @@ try:
                     cardTextConvert += "s" + card_s
                 if card_z:
                     cardTextConvert += "z" + card_z
-                # 输出结果
-                # print(cardTextConvert)
-
-
                 # strText = cardText
                 # cv2.namedWindow(strText,cv2.WINDOW_NORMAL)
                 # cv2.imshow(strText,imshowTarget)
