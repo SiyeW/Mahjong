@@ -10,7 +10,9 @@ try:
         while True:
             if not steadyLocation:
                 start = time.time()
-                location = locate()
+                # location = locate()
+                # print(f"{location=}")
+                location = (363, 1158, 1685, 224)
                 end = time.time()
                 print(f"Time spent on locating: {end-start:.2f}s")
             else:
@@ -23,19 +25,21 @@ try:
                     end = time.time()
                     if result:
                         start = time.time()
-                        cards, lastCards = parse(), cards
+                        (cards, cardsConvert), lastCards = parse(), cards
                         # print(f"{cards=}")
                         end = time.time()
-                        if cards!=lastCards:
+                        if cards.replace("0","5")!=lastCards.replace("0","5"):
                             start = time.time()
-                            with open('cards',"w") as fo:
-                                fo.write(cards)
                             result = decide(cards)
                             steadyLocation = location
                             end = time.time()
                             if result == False:
                                 time.sleep(0.05)
                                 break
+                            else:
+                                if result != None:
+                                    with open('cards',"w") as fo:
+                                        fo.write(cardsConvert)
                             # print(f"Time spent on screenshotting: {end-start:.2f}s")
                             # print(f"Time spent on parsing: {end-start:.2f}s")
                             # print(f"Time spent on deciding: {end-start:.2f}s")
@@ -147,20 +151,43 @@ try:
                     if mjs["z"].get(i,0): is_z = True
                 if is_z: cardText = cardText + "z"
 
+                cardTextConvert = ""
+                card_m = card_p = card_s = card_z = ""
+                # 添加 "m" 类型的牌
+                for i in (1, 2, 3, 4, 0, 5, 6, 7, 8, 9):
+                    card_m += str(i)*mjs["m"].get(i,0)
+                # 添加 "p" 类型的牌
+                for i in (1, 2, 3, 4, 0, 5, 6, 7, 8, 9):
+                    card_p += str(i)*mjs["p"].get(i,0)
+                # 添加 "s" 类型的牌
+                for i in (1, 2, 3, 4, 0, 5, 6, 7, 8, 9):
+                    card_s += str(i)*mjs["s"].get(i,0)
+                # 添加 "z" 类型的牌
+                for i in range(1, 8):
+                    card_z += str(i)*mjs["z"].get(i,0)
+                # 检查是否有每种牌类型，并将其添加到 cardTextConvert 中
+                if card_m:
+                    cardTextConvert += "m" + card_m
+                if card_p:
+                    cardTextConvert += "p" + card_p
+                if card_s:
+                    cardTextConvert += "s" + card_s
+                if card_z:
+                    cardTextConvert += "z" + card_z
                 # strText = cardText
                 # cv2.namedWindow(strText,cv2.WINDOW_NORMAL)
                 # cv2.imshow(strText,imshowTarget)
                 # cv2.waitKey()
                 # cv2.destroyAllWindows()
-                return cardText
+                return (cardText, cardTextConvert)
             
-            cardText = detect()
+            cardText, cardTextConvert = detect()
         except:
             print("Error with parse()")
             raise KeyboardInterrupt
             return False
         else:
-            return cardText
+            return (cardText, cardTextConvert)
         
     def decide(cards):    
         if cards:
