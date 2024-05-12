@@ -1,6 +1,7 @@
 import time
 import pyautogui
-import cv2
+# import cv2
+from cv2 import imread, matchTemplate, TM_SQDIFF_NORMED
 import numpy
 import re
 import mah # mah.py
@@ -105,9 +106,9 @@ def parse():
     try:
         def detect():
             def detectOneType(templatePath, imshowTarget):
-                template = cv2.imread(templatePath)
+                template = imread(templatePath)
                 theight, twidth = template.shape[:2]
-                result = cv2.matchTemplate(imshowTarget,template,cv2.TM_SQDIFF_NORMED)
+                result = matchTemplate(imshowTarget,template,TM_SQDIFF_NORMED)
                 numOfloc = 0
                 threshold = 0.03
                 loc = numpy.where(result<threshold)
@@ -122,7 +123,7 @@ def parse():
                 return (numOfloc, imshowTarget)
             
             targetPath = "img/screenshot_partial.png"
-            imshowTarget = cv2.imread(targetPath)
+            imshowTarget = imread(targetPath)
             
             noDuplicates=[]
             mjs={"m":{},
@@ -203,4 +204,6 @@ def parse():
     else:
         return (cardText, cardTextConvert)
     
+# import  os
+# print(os.getcwd())
 start()
